@@ -12,7 +12,7 @@
 <h2 style="margin-bottom: 20px;">Thông tin đặt hàng</h2>
 @if (Model.Count > 0)
 {
-    <table id="cart" class="table table-hover table-condensed">
+    <table id="cart" class="table table-condensed">
         <thead>
             <tr>
                 <th style="width:50%">Sản phẩm</th>
@@ -36,7 +36,7 @@
                     </td>
                     <td data-th="Price">@item.sach.GiaBan.GetValueOrDefault(0).ToString("N0") VND</td>
                     <td data-th="Quantity">
-                        <input type="number" class="txtQuantity" readonly="readonly" data-id="@item.sach.MaSach" value="@item.Quantity">
+                        <input type="number" style="border: none;" class="txtQuantity" readonly="readonly" data-id="@item.sach.MaSach" value="@item.Quantity">
                     </td>
                     <td data-th="Subtotal" class="text-center">@((item.sach.GiaBan.GetValueOrDefault(0) * item.Quantity).ToString("N0")) VND</td>
                 </tr>
@@ -44,7 +44,7 @@
         </tbody>
         <tfoot>
             <tr class="visible-xs">
-                <td class="text-center"><strong>Total 1.99</strong></td>
+                <td class="text-center"><strong>Tổng cộng: @String.Format("{0:0,0}", ViewBag.Total) VND</strong></td>
             </tr>
             <tr>
                 <td>
@@ -56,8 +56,9 @@
             </tr>
         </tfoot>
     </table>
-
-    @Html.Action("UserInfo","Cart")
+    
+        @Html.Action("UserInfo", "Cart")
+    
   
 }
 else

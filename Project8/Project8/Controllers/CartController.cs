@@ -196,10 +196,11 @@ namespace WebBanSach.Controllers
             ViewBag.Total = total;
             return View(list);
         }
-
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         [HttpPost]
-        public ActionResult Payment(int MaKH)
+        public ActionResult Payment(int MaKH,FormCollection f)
         {
+            var PMethod = int.Parse(f["PaymentMethod"]);
             var order = new DonDatHang();
             order.NgayDat = DateTime.Now;
             order.NgayGiao = DateTime.Now.AddDays(3);
@@ -208,22 +209,28 @@ namespace WebBanSach.Controllers
 
             try
             {
-                //thêm dữ liệu vào đơn đặt hàng
-                var result1 = new OrderProcess().Insert(order);
-
-                var cart = (List<CartModel>)Session[CartSession];
-                var result2 = new OderDetailProcess();
-                decimal? total = 0;
-                foreach (var item in cart)
+                if (PMethod == 1)
                 {
-                    var orderDetail = new ChiTietDDH();
-                    orderDetail.MaSach = item.sach.MaSach;
-                    orderDetail.MaDDH = result1;
-                    orderDetail.SoLuong = item.Quantity;
-                    orderDetail.DonGia = item.sach.GiaBan;
-                    result2.Insert(orderDetail);
+                    //thêm dữ liệu vào đơn đặt hàng
+                    var result1 = new OrderProcess().Insert(order);
+                    var cart = (List<CartModel>)Session[CartSession];
+                    var result2 = new OderDetailProcess();
+                    decimal? total = 0;
+                    foreach (var item in cart)
+                    {
+                        var orderDetail = new ChiTietDDH();
+                        orderDetail.MaSach = item.sach.MaSach;
+                        orderDetail.MaDDH = result1;
+                        orderDetail.SoLuong = item.Quantity;
+                        orderDetail.DonGia = item.sach.GiaBan;
+                        result2.Insert(orderDetail);
 
-                    total = cart.Sum(x => x.Total);
+                        total = cart.Sum(x => x.Total);
+                    }
+                }
+                else
+                {
+                    return Redirect("http://solienlac-us.tk/");
                 }
             }
             catch (Exception)

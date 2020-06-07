@@ -119,3 +119,5 @@ C:\Users\unfor\Desktop\DoAnLapTrinhWeb\DoAnLapTrinhWeb\Project8\Project8\bin\New
 C:\Users\unfor\Desktop\DoAnLapTrinhWeb\DoAnLapTrinhWeb\Project8\Project8\obj\Debug\WebBanSach.csprojResolveAssemblyReference.cache
 C:\Users\unfor\Desktop\DoAnLapTrinhWeb\DoAnLapTrinhWeb\Project8\Project8\obj\Debug\Project8.dll
 C:\Users\unfor\Desktop\DoAnLapTrinhWeb\DoAnLapTrinhWeb\Project8\Project8\obj\Debug\Project8.pdb
+C:\Users\unfor\Desktop\DoAnLapTrinhWeb\DoAnLapTrinhWeb\Project8\Project8\bin\log4net.dll
+C:\Users\unfor\Desktop\DoAnLapTrinhWeb\DoAnLapTrinhWeb\Project8\Project8\bin\log4net.xml
