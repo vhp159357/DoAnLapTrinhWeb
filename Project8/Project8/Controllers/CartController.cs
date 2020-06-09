@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebBanSach.Models.Data;
 using WebBanSach.Models.Process;
 using WebBanSach.Models;
 using System.Web.Script.Serialization;
+using Newtonsoft.Json.Linq;
+using Project8.Models.Process;
 
 namespace WebBanSach.Controllers
 {
@@ -206,12 +209,33 @@ namespace WebBanSach.Controllers
             order.NgayGiao = DateTime.Now.AddDays(3);
             order.TinhTrang = true; //đã nhận hàng
             order.MaKH = MaKH;
-
+            
             try
             {
                 if (PMethod == 1)
                 {
                     //thêm dữ liệu vào đơn đặt hàng
+                    order.ThanhToan = false;
+                    var result1 = new OrderProcess().Insert(order);
+                    var cart = (List<CartModel>)Session[CartSession];
+                    var result2 = new OderDetailProcess();
+                    decimal? total = 0;
+                    foreach (var item in cart)
+                    {
+                        var orderDetail = new ChiTietDDH();
+                        orderDetail.MaSach = item.sach.MaSach;
+                        orderDetail.MaDDH = result1;
+                        orderDetail.SoLuong = item.Quantity;
+                        orderDetail.DonGia = item.sach.GiaBan;
+                        result2.Insert(orderDetail);
+
+                        total = cart.Sum(x => x.Total);
+                        return Redirect("/Cart/Success");
+                    }
+                }
+                else
+                {
+                    order.ThanhToan = false;
                     var result1 = new OrderProcess().Insert(order);
                     var cart = (List<CartModel>)Session[CartSession];
                     var result2 = new OderDetailProcess();
@@ -227,10 +251,11 @@ namespace WebBanSach.Controllers
 
                         total = cart.Sum(x => x.Total);
                     }
-                }
-                else
-                {
-                    return Redirect("http://solienlac-us.tk/");
+                    
+                    var phong = total.ToString().Substring(0,total.ToString().Length-5);
+
+                    return Redirect(ThanhToanMoMo(result1.ToString(), phong));
+
                 }
             }
             catch (Exception)
@@ -238,9 +263,66 @@ namespace WebBanSach.Controllers
                 return Redirect("/Cart/Error");
             }
 
-            return Redirect("/Cart/Success");
+            return new EmptyResult();
+
         }
 
+        protected string ThanhToanMoMo(string maDonHang,string tongCong)
+        {
+            string endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
+            string partnerCode = "MOMOHDRK20200430";
+            string accessKey = "68tVdaHzCcvtfzwH";
+            string serectkey = "8AWejATXBF96XL3CqeICtqiiKwheEUAv";
+            string orderInfo = "MuaSach";
+            string returnUrl = "http://localhost:54921/Cart/Success";
+            string notifyurl = "http://solienlac-us.tk/TaiKhoanPhuHuynh/DangNhap";
+
+            string amount = tongCong;
+            string orderid = maDonHang;
+            string requestId = maDonHang;
+            string extraData = "";
+
+            string rawHash = "partnerCode=" +
+                             partnerCode + "&accessKey=" +
+                             accessKey + "&requestId=" +
+                             requestId + "&amount=" +
+                             amount + "&orderId=" +
+                             orderid + "&orderInfo=" +
+                             orderInfo + "&returnUrl=" +
+                             returnUrl + "&notifyUrl=" +
+                             notifyurl + "&extraData=" +
+                             extraData;
+
+            log.Debug("rawHash = " + rawHash);
+            MoMoSecurity crypto = new MoMoSecurity();
+            //sign signature SHA256
+            string signature = crypto.signSHA256(rawHash, serectkey);
+            log.Debug("Signature = " + signature);
+
+            //build body json request
+            JObject message = new JObject
+            {
+                { "partnerCode", partnerCode },
+                { "accessKey", accessKey },
+                { "requestId", requestId },
+                { "amount", amount },
+                { "orderId", orderid },
+                { "orderInfo", orderInfo },
+                { "returnUrl", returnUrl },
+                { "notifyUrl", notifyurl },
+                { "extraData", extraData },
+                { "requestType", "captureMoMoWallet" },
+                { "signature", signature }
+
+            };
+            log.Debug("Json request to MoMo: " + message.ToString());
+            string responseFromMomo = PaymentRequest.sendPaymentRequest(endpoint, message.ToString());
+
+            JObject jmessage = JObject.Parse(responseFromMomo);
+            log.Debug("Return from MoMo: " + jmessage.ToString());
+
+            return jmessage.GetValue("payUrl").ToString();
+        }
         public ActionResult Success()
         {
             return View();

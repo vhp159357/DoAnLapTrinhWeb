@@ -31,6 +31,7 @@
         public bool TinhTrang { get; set; }
 
         public int MaKH { get; set; }
+        public bool? ThanhToan { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ChiTietDDH> ChiTietDDHs { get; set; }
