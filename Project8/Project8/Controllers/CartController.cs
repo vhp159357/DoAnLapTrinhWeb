@@ -215,7 +215,7 @@ namespace WebBanSach.Controllers
                 if (PMethod == 1)
                 {
                     //thêm dữ liệu vào đơn đặt hàng
-                    order.ThanhToan = false;
+                    order.ThanhToan = 1;
                     var result1 = new OrderProcess().Insert(order);
                     var cart = (List<CartModel>)Session[CartSession];
                     var result2 = new OderDetailProcess();
@@ -235,7 +235,7 @@ namespace WebBanSach.Controllers
                 }
                 else
                 {
-                    order.ThanhToan = false;
+                    order.ThanhToan = 0;
                     var result1 = new OrderProcess().Insert(order);
                     var cart = (List<CartModel>)Session[CartSession];
                     var result2 = new OderDetailProcess();
@@ -251,10 +251,9 @@ namespace WebBanSach.Controllers
 
                         total = cart.Sum(x => x.Total);
                     }
+                    return Redirect(ThanhToanMoMo(result1.ToString(), 
+                        total.ToString().Substring(0, total.ToString().Length - 5)));
                     
-                    var phong = total.ToString().Substring(0,total.ToString().Length-5);
-
-                    return Redirect(ThanhToanMoMo(result1.ToString(), phong));
 
                 }
             }
@@ -320,8 +319,9 @@ namespace WebBanSach.Controllers
 
             JObject jmessage = JObject.Parse(responseFromMomo);
             log.Debug("Return from MoMo: " + jmessage.ToString());
-
+            
             return jmessage.GetValue("payUrl").ToString();
+            
         }
         public ActionResult Success()
         {
