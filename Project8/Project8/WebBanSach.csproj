@@ -1090,6 +1090,7 @@
     <Content Include="Areas\Admin\Views\Home\DetailsUser.cshtml" />
     <Content Include="Areas\Admin\Views\Home\Order.cshtml" />
     <Content Include="Areas\Admin\Views\Home\DetailsOrder.cshtml" />
+    <Content Include="EmailTemplate\Text.cshtml" />
     <None Include="Properties\PublishProfiles\123.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -1143,6 +1144,7 @@
     <Content Include="Views\Home\VanChuyen.cshtml" />
     <Content Include="Views\Home\DoiTra.cshtml" />
     <Content Include="Views\Home\Help.cshtml" />
+    <Content Include="Views\User\XacNhan.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

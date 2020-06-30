@@ -4,7 +4,10 @@ using WebBanSach.Models.Process;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Text;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.Mvc;
 
 namespace WebBanSach.Controllers
@@ -55,15 +58,18 @@ namespace WebBanSach.Controllers
                     kh.DienThoai = model.DienThoai;
                     kh.NgaySinh = model.NgaySinh;
                     kh.NgayTao = DateTime.Now;
-                    kh.TrangThai = true;
-
+                    kh.TrangThai = false;
+                    
                     var result = user.InsertUser(kh);
-
+                    
+                    var idUser = db.KhachHangs.FirstOrDefault(n => n.Email == kh.Email && n.TenKH == kh.TenKH);
+                    BuildUserTemplate(idUser.MaKH);
                     if (result > 0)
                     {
                         //Session["User"] = result;
                         ModelState.Clear();
                         //return Redirect("/Home/");
+                        //ModelState.AddModelError("", "Vui Lòng Check Email Kích Hoạt Tài Khoản !");
                         return RedirectToAction("Index", "Home");
                     }
                     else
@@ -77,8 +83,83 @@ namespace WebBanSach.Controllers
             return View(model);
         }
 
+        public ActionResult XacNhan(int khMaKh)
+        {
+            ViewBag.Makh = khMaKh;
+            return View();
+        }
+
+        public JsonResult XacNhanEmail(int khMaKh)
+        {
+            KhachHang Data = db.KhachHangs.Where(x => x.MaKH == khMaKh).FirstOrDefault();
+            Data.TrangThai = true;
+            db.SaveChanges();
+            var msg = "Đã Xác Nhận Email!";
+            return Json(msg, JsonRequestBehavior.AllowGet);
+        }
+        public void BuildUserTemplate(int khMaKh)
+        {
+            string body =
+                System.IO.File.ReadAllText(HostingEnvironment.MapPath("~/EmailTemplate/") + "Text" + ".cshtml");
+            var inforKH = db.KhachHangs.Where(x => x.MaKH == khMaKh).First();
+            var url = "http://localhost:54921/"+"User/XacNhan?khMaKh="+khMaKh;
+            body = body.Replace("@ViewBag.LinkXacNhan", url);
+            body = body.ToString();
+            BuildEmailTemplate("Tài Khoản Đã Tạo Thành Công", body, inforKH.Email);
+        }
+
+        public void BuildEmailTemplate(string subjectText, string bodyText, string sendTo)
+        {
+            string from, to, bcc, cc, subject, body;
+            from = "webbansach17dtha3@gmail.com";
+            to = sendTo.Trim();
+            bcc = "";
+            cc = "";
+            subject = subjectText;
+            StringBuilder sb = new StringBuilder();
+            sb.Append(bodyText);
+            body = sb.ToString();
+            MailMessage mail = new MailMessage();
+            mail.From = new MailAddress(from);
+            mail.To.Add(new MailAddress(to));
+            if (!string.IsNullOrEmpty(bcc))
+            {
+                mail.Bcc.Add(new MailAddress(bcc));
+            }
+
+            if (!string.IsNullOrEmpty(cc))
+            {
+                mail.CC.Add(new MailAddress(cc));
+            }
+
+            mail.Subject = subject;
+            mail.Body = body;
+            mail.IsBodyHtml = true;
+            SendEmail(mail);
+        }
+
+        public static void SendEmail(MailMessage mail)
+        {
+            SmtpClient client = new SmtpClient();
+            client.Host = "smtp.gmail.com";
+            client.Port = 587;
+            client.EnableSsl = true;
+            client.UseDefaultCredentials = false;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.Credentials = new System.Net.NetworkCredential("webbansach17dtha3@gmail.com","webbansach123");
+            try
+            {
+                client.Send(mail);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw e;
+            }
+        }
+
         //GET : /User/LoginPage : trang đăng nhập
-        [HttpGet]
+        
         public ActionResult LoginPage()
         {
             return View();
@@ -120,9 +201,9 @@ namespace WebBanSach.Controllers
 
         //GET : /User/Login : đăng nhập tài khoản
         //Parital View : Login
-        [HttpGet]
+        
         [ChildActionOnly]
-        public PartialViewResult Login()
+        public ActionResult Login()
         {
             return PartialView();
         }

@@ -10,7 +10,10 @@
 @using (Html.BeginForm("Register", "User", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-
+    if (ViewBag.ThongBao != null)
+     {
+         <label style="color: red;">ViewBag.ThongBao</label>
+     }
     <div class="form-horizontal">
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
