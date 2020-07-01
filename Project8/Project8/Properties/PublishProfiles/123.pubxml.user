@@ -139,7 +139,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/30/2020 17:27:19</publishTime>
     </File>
     <File Include="bin/Project8.dll">
-      <publishTime>07/01/2020 12:35:46</publishTime>
+      <publishTime>07/01/2020 13:06:18</publishTime>
     </File>
     <File Include="bin/roslyn/csc.exe">
       <publishTime>06/30/2020 17:27:18</publishTime>
