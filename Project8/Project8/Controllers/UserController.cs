@@ -16,7 +16,7 @@ namespace WebBanSach.Controllers
     {
         //Khởi tạo biến dữ liệu : db
         BSDBContext db = new BSDBContext();
-
+        public static KhachHang khachhangstatic;
         [HttpGet]
         // GET: User
         public ActionResult Index()
@@ -70,7 +70,7 @@ namespace WebBanSach.Controllers
                         ModelState.Clear();
                         //return Redirect("/Home/");
                         //ModelState.AddModelError("", "Vui Lòng Check Email Kích Hoạt Tài Khoản !");
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("KiemTraThongBaoKichHoat", "User");
                     }
                     else
                     {
@@ -102,10 +102,11 @@ namespace WebBanSach.Controllers
             string body =
                 System.IO.File.ReadAllText(HostingEnvironment.MapPath("~/EmailTemplate/") + "Text" + ".cshtml");
             var inforKH = db.KhachHangs.Where(x => x.MaKH == khMaKh).First();
-            var url = "http://localhost:54921/"+"User/XacNhan?khMaKh="+khMaKh;
+            var url = "https://webbansach17dtha3.cf/" + "User/XacNhan?khMaKh="+khMaKh;
             body = body.Replace("@ViewBag.LinkXacNhan", url);
             body = body.ToString();
             BuildEmailTemplate("Tài Khoản Đã Tạo Thành Công", body, inforKH.Email);
+
         }
 
         public void BuildEmailTemplate(string subjectText, string bodyText, string sendTo)
@@ -158,8 +159,16 @@ namespace WebBanSach.Controllers
             }
         }
 
+        public ActionResult ThongBaoKichHoat()
+        {
+            return View();
+        }
+        public ActionResult KiemTraThongBaoKichHoat()
+        {
+            return View();
+        }
         //GET : /User/LoginPage : trang đăng nhập
-        
+
         public ActionResult LoginPage()
         {
             return View();
@@ -179,6 +188,8 @@ namespace WebBanSach.Controllers
                 {
                     //gán Session["LoginAdmin"] bằng dữ liệu đã đăng nhập
                     Session["User"] = model.TaiKhoan;
+                    var kh = db.KhachHangs.Where(x => x.TaiKhoan == model.TaiKhoan).FirstOrDefault();
+                    khachhangstatic = kh;
                     //trả về trang chủ
                     return RedirectToAction("Index", "Home");
                 }
@@ -224,6 +235,8 @@ namespace WebBanSach.Controllers
                 {
                     //gán Session["LoginAdmin"] bằng dữ liệu đã đăng nhập
                     Session["User"] = model.TaiKhoan;
+                    var kh = db.KhachHangs.Where(x => x.TaiKhoan == model.TaiKhoan).FirstOrDefault();
+                    khachhangstatic = kh;
                     //trả về trang chủ
                     return RedirectToAction("Index", "Home");
                 }
@@ -249,7 +262,7 @@ namespace WebBanSach.Controllers
         public ActionResult Logout()
         {
             Session["User"] = null;
-
+            khachhangstatic = null;
             return RedirectToAction("Index", "Home");
         }
 

@@ -6,9 +6,11 @@ using System.Web.Mvc;
 using WebBanSach.Models.Data;
 using WebBanSach.Models.Process;
 using System.IO;
+using Project8.Areas.Admin.Code;
 
 namespace WebBanSach.Areas.Admin.Controllers
 {
+    [SessionAuthorize]
     public class HomeController : Controller
     {
         //Trang quản lý

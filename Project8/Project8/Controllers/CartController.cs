@@ -185,19 +185,26 @@ namespace WebBanSach.Controllers
                 return RedirectToAction("LoginPage", "User");
             }
 
-            var cart = Session[CartSession];
-            var list = new List<CartModel>();
-            var sl = 0;
-            decimal? total = 0;
-            if (cart != null)
+            if (UserController.khachhangstatic.TrangThai == false)
             {
-                list = (List<CartModel>)cart;
-                sl = list.Sum(x => x.Quantity);
-                total = list.Sum(x => x.Total);
+                return RedirectToAction("ThongBaoKichHoat", "User");
             }
-            ViewBag.Quantity = sl;
-            ViewBag.Total = total;
-            return View(list);
+            else
+            {
+                var cart = Session[CartSession];
+                var list = new List<CartModel>();
+                var sl = 0;
+                decimal? total = 0;
+                if (cart != null)
+                {
+                    list = (List<CartModel>)cart;
+                    sl = list.Sum(x => x.Quantity);
+                    total = list.Sum(x => x.Total);
+                }
+                ViewBag.Quantity = sl;
+                ViewBag.Total = total;
+                return View(list);
+            }
         }
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         [HttpPost]
@@ -272,9 +279,9 @@ namespace WebBanSach.Controllers
             string partnerCode = "MOMOHDRK20200430";
             string accessKey = "68tVdaHzCcvtfzwH";
             string serectkey = "8AWejATXBF96XL3CqeICtqiiKwheEUAv";
-            string orderInfo = "MuaSach";
-            string returnUrl = "http://localhost:54921/Cart/Success";
-            string notifyurl = "http://solienlac-us.tk/TaiKhoanPhuHuynh/DangNhap";
+            string orderInfo = "OrderBook";
+            string returnUrl = "https://webbansach17dtha3.cf//Cart/Success";
+            string notifyurl = "https://webbansach17dtha3.cf/";
 
             string amount = tongCong;
             string orderid = maDonHang;

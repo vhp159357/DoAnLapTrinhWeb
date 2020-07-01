@@ -171,6 +171,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Code\CheckSession.cs" />
     <Compile Include="Areas\Admin\Controllers\HomeController.cs" />
     <Compile Include="Areas\Admin\Controllers\LoginController.cs" />
     <Compile Include="Areas\Admin\Models\LoginModel.cs" />
@@ -1145,6 +1146,8 @@
     <Content Include="Views\Home\DoiTra.cshtml" />
     <Content Include="Views\Home\Help.cshtml" />
     <Content Include="Views\User\XacNhan.cshtml" />
+    <Content Include="Views\User\ThongBaoKichHoat.cshtml" />
+    <Content Include="Views\User\KiemTraThongBaoKichHoat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
