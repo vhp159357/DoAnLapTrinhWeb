@@ -96,6 +96,7 @@ namespace WebBanSach.Controllers
             Data.TrangThai = true;
             db.SaveChanges();
             var msg = "Đã Xác Nhận Email!";
+            Session["User"] = null;
             return Json(msg, JsonRequestBehavior.AllowGet);
         }
         public void BuildUserTemplate(int khMaKh)

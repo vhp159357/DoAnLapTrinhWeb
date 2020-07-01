@@ -237,8 +237,11 @@ namespace WebBanSach.Controllers
                         result2.Insert(orderDetail);
 
                         total = cart.Sum(x => x.Total);
-                        return Redirect("/Cart/Success");
+                        
                     }
+
+                    Session[CartSession] = null;
+                    return Redirect("/Cart/Success");
                 }
                 else
                 {
@@ -258,6 +261,7 @@ namespace WebBanSach.Controllers
 
                         total = cart.Sum(x => x.Total);
                     }
+                    Session[CartSession] = null;
                     return Redirect(ThanhToanMoMo(result1.ToString(), 
                         total.ToString().Substring(0, total.ToString().Length - 5)));
                     
