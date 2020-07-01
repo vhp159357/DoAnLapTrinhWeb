@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using System.Net.Mime;
 using System.Text;
 using System.Web;
 using System.Web.Hosting;
@@ -132,10 +133,11 @@ namespace WebBanSach.Controllers
             {
                 mail.CC.Add(new MailAddress(cc));
             }
-
+            
             mail.Subject = subject;
             mail.Body = body;
             mail.IsBodyHtml = true;
+            mail.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(body, new ContentType("text/html")));
             SendEmail(mail);
         }
 
